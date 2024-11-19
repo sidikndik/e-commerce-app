@@ -1,6 +1,7 @@
 package service
 
 import (
+	"e-commerce-app/model"
 	"e-commerce-app/repository"
 
 	"go.uber.org/zap"
@@ -16,4 +17,8 @@ func NewCustomerService(repo repository.AllRepository, log *zap.Logger) Customer
 		Repo: repo,
 		Log:  log,
 	}
+}
+
+func (customerService *CustomerService) Create(customer *model.Customer) error {
+	return customerService.Repo.CustomerRep.Create(customer)
 }

@@ -2,6 +2,7 @@ package handler
 
 import (
 	"e-commerce-app/service"
+	"net/http"
 
 	"go.uber.org/zap"
 )
@@ -16,4 +17,8 @@ func NewCustomerService(service service.AllService, log *zap.Logger) CustomerHad
 		Service: service,
 		Log:     log,
 	}
+}
+
+func (CustomerHadler *CustomerHadler) Create(w http.ResponseWriter, r *http.Request) {
+
 }

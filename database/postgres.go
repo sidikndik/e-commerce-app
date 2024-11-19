@@ -2,14 +2,18 @@ package database
 
 import (
 	"database/sql"
+	"e-commerce-app/util"
+
+	"fmt"
 	"time"
 
 	_ "github.com/lib/pq"
 )
 
-func InitDB() (*sql.DB, error) {
-	query := "user=postgres password=postgres dbname=postgres sslmode=disable host=localhost"
-	db, err := sql.Open("postgres", query)
+func InitDB(config util.Configuration) (*sql.DB, error) {
+	connStr := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable host=%s TimeZone=Asia/Jakarta",
+		config.DBConfig.DBName, config.DBConfig.DBPassword, config.DBConfig.DBName, config.DBConfig.DBHost)
+	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		return nil, err
 	}

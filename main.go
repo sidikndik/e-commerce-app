@@ -10,7 +10,8 @@ import (
 func main() {
 	ctx, err := infra.NewContext()
 	if err != nil {
-		ctx.Handler.CustomerHandler.Log.Panic("Error", zap.Error(err))
+		ctx.Log.Panic("Error", zap.Error(err))
+		return
 	}
 
 	router.SetupReouter(ctx)

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"e-commerce-app/helper"
 	"e-commerce-app/service"
 	"net/http"
 
@@ -21,4 +22,14 @@ func NewCustomerService(service service.AllService, log *zap.Logger) CustomerHad
 
 func (CustomerHadler *CustomerHadler) Create(w http.ResponseWriter, r *http.Request) {
 
+}
+
+func (CustomerHadler *CustomerHadler) GetAll(w http.ResponseWriter, r *http.Request) {
+	customers, err := CustomerHadler.Service.CustomerService.GetAll()
+	if err != nil {
+		CustomerHadler.Log.Error("error get all data :", zap.Error(err))
+		helper.BadResponse(w, err.Error(), http.StatusBadRequest)
+	}
+
+	helper.SuccessResponseWithData(w, "success", http.StatusOK, customers)
 }

@@ -1,14 +1,17 @@
 package util
 
 import (
+	"e-commerce-app/helper"
+	"os"
+
 	"go.uber.org/zap"
 )
 
-func LoggerInit(config Configuration) (*zap.Logger, error) {
+func LoggerInit() (*zap.Logger, error) {
 
 	var logger *zap.Logger
 	var err error
-	if config.Debug {
+	if helper.StringToBool(os.Getenv("DEBUG")) {
 		logger, err = zap.NewDevelopment()
 	} else {
 		logger, err = zap.NewDevelopment()

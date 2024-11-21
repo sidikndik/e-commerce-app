@@ -22,3 +22,7 @@ func NewCustomerService(repo repository.AllRepository, log *zap.Logger) Customer
 func (customerService *CustomerService) Create(customer *model.Customer) error {
 	return customerService.Repo.CustomerRep.Create(customer)
 }
+
+func (customerService *CustomerService) GetAll() (*[]model.Customer, error) {
+	return customerService.Repo.CustomerRep.GetAll()
+}

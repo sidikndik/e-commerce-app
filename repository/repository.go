@@ -1,16 +1,15 @@
 package repository
 
 import (
-	"database/sql"
-
 	"go.uber.org/zap"
+	"gorm.io/gorm"
 )
 
 type AllRepository struct {
 	CustomerRep CustomerRepository
 }
 
-func NewAllRepository(db *sql.DB, log *zap.Logger) AllRepository {
+func NewAllRepository(db *gorm.DB, log *zap.Logger) AllRepository {
 	return AllRepository{
 		CustomerRep: NewCustomerRepository(db, log),
 	}

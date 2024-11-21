@@ -13,6 +13,8 @@ func SetupReouter(ctx infra.Context) {
 
 	r.Route("/customer ", func(r chi.Router) {
 		r.Post("/", ctx.Handler.CustomerHandler.Create)
+		r.Get("/", ctx.Handler.CustomerHandler.Create)
+		r.Get("/{id}", ctx.Handler.CustomerHandler.Create)
 	})
 
 	fmt.Println("server start on port ", ctx.Config.Port)

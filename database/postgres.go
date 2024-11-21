@@ -1,27 +1,53 @@
 package database
 
 import (
-	"database/sql"
 	"e-commerce-app/util"
+	"log"
+	"os"
 
 	"fmt"
 	"time"
 
-	_ "github.com/lib/pq"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
-func InitDB(config util.Configuration) (*sql.DB, error) {
+func InitDB(config util.Configuration) (*gorm.DB, error) {
+	// Format connection string
 	connStr := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable host=%s TimeZone=Asia/Jakarta",
 		config.DBConfig.DBName, config.DBConfig.DBPassword, config.DBConfig.DBName, config.DBConfig.DBHost)
-	db, err := sql.Open("postgres", connStr)
+
+	// Setup logger for GORM
+	newLogger := logger.New(
+		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
+		logger.Config{
+			SlowThreshold:             time.Second, // Slow SQL threshold
+			LogLevel:                  logger.Info, // Log level
+			IgnoreRecordNotFoundError: false,       // Ignore ErrRecordNotFound error for logger
+			Colorful:                  true,        // Disable color
+		},
+	)
+
+	// Open a connection to the PostgreSQL databas
+	db, err := gorm.Open(postgres.Open(connStr), &gorm.Config{
+		Logger: newLogger,
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	db.SetConnMaxIdleTime(10 * time.Minute)
-	db.SetConnMaxLifetime(1 * time.Hour)
-	db.SetMaxIdleConns(10)
-	db.SetConnMaxLifetime(50)
+	// Convert to *sql.DB for setting connection options
+	sqlDB, err := db.DB()
+	if err != nil {
+		return nil, err
+	}
+
+	// Set connection pool options
+	sqlDB.SetConnMaxIdleTime(time.Duration(config.DBConfig.DBMaxIdleTime) * time.Minute)
+	sqlDB.SetConnMaxLifetime(time.Duration(config.DBConfig.DBMaxLifeTime) * time.Hour)
+	sqlDB.SetMaxIdleConns(config.DBConfig.DBMaxIdleConns)
+	sqlDB.SetMaxOpenConns(config.DBConfig.DBMaxOpenConns)
 
 	return db, err
 }

@@ -20,7 +20,7 @@ func NewCustomerRepository(db *gorm.DB, log *zap.Logger) CustomerRepository {
 }
 
 func (customerRepo *CustomerRepository) Create(customer *model.Customer) error {
-	query := "INSET INTO customers (name, email, phone, password) VALUES ($1, $2, $3, $4) RETURNING id"
+	query := "INSERT INTO customers (name, email, phone, password) VALUES ($1, $2, $3, $4) RETURNING id"
 	err := customerRepo.DB.Raw(query, customer.Name, customer.Email, customer.Phone, customer.Password).Scan(&customer.ID).Error
 	return err
 }

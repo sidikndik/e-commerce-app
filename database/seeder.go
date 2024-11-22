@@ -29,5 +29,9 @@ func SeedAll(db *gorm.DB) error {
 func dataSeeds() []interface{} {
 	return []interface{}{
 		model.SeedCustomer(),
+		model.CategorySeed(),
+		model.VariantSeed(),
+		model.ProductSeed(),
+		model.ProductVariantSeed(),
 	}
 }

@@ -6,7 +6,7 @@ type Category struct {
 }
 
 func CategorySeed() []Category {
-	categories := []Category{
+	return []Category{
 		{Name: "Elektronik"},
 		{Name: "Peralatan Rumah Tangga"},
 		{Name: "Fashion Pria"},
@@ -18,5 +18,4 @@ func CategorySeed() []Category {
 		{Name: "Buku dan Alat Tulis"},
 		{Name: "Otomotif"},
 	}
-	return categories
 }

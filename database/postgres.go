@@ -15,8 +15,8 @@ import (
 
 func InitDB(config util.Configuration) (*gorm.DB, error) {
 	// Format connection string
-	connStr := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable host=%s TimeZone=Asia/Jakarta",
-		config.DBConfig.DBUsername, config.DBConfig.DBPassword, config.DBConfig.DBName, config.DBConfig.DBHost)
+	connStr := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable host=%s TimeZone=%s",
+		config.DBConfig.DBUsername, config.DBConfig.DBPassword, config.DBConfig.DBName, config.DBConfig.DBHost, config.DBConfig.DBTimeZone)
 
 	// Setup logger for GORM
 	newLogger := logger.New(
@@ -49,6 +49,7 @@ func InitDB(config util.Configuration) (*gorm.DB, error) {
 	sqlDB.SetMaxIdleConns(config.DBConfig.DBMaxIdleConns)
 	sqlDB.SetMaxOpenConns(config.DBConfig.DBMaxOpenConns)
 
+	// Migration tabel form struct
 	err = AutoMigrate(db)
 	if err != nil {
 		return nil, fmt.Errorf("ERROR: failed migrateAllTable, message: %s", err.Error())

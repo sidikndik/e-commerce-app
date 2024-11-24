@@ -7,13 +7,19 @@ import (
 	"gorm.io/gorm"
 )
 
+type CustomerRepoInterface interface {
+	Create(customer *model.Customer) error
+	GetByCondition(customer model.Customer) (*model.Customer, error)
+	GetAll() (*[]model.Customer, error)
+}
+
 type CustomerRepository struct {
 	DB     *gorm.DB
 	Logger *zap.Logger
 }
 
-func NewCustomerRepository(db *gorm.DB, log *zap.Logger) CustomerRepository {
-	return CustomerRepository{
+func NewCustomerRepository(db *gorm.DB, log *zap.Logger) CustomerRepoInterface {
+	return &CustomerRepository{
 		DB:     db,
 		Logger: log,
 	}
@@ -42,4 +48,23 @@ func (customerRepo *CustomerRepository) GetAll() (*[]model.Customer, error) {
 		customers = append(customers, user)
 	}
 	return &customers, nil
+}
+
+func (CustomerRepository *CustomerRepository) GetByCondition(customer model.Customer) (*model.Customer, error) {
+	var customerResult model.Customer
+	query := CustomerRepository.DB.Model(&model.Customer{})
+	if customer.Email != "" {
+		query = query.Where("email = ?", customer.Email)
+	}
+
+	if customer.Phone != "" {
+		query = query.Where("phone = ?", customer.Phone)
+	}
+
+	err := query.First(&customerResult).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return &customerResult, nil
 }

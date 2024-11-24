@@ -9,13 +9,19 @@ import (
 	"go.uber.org/zap"
 )
 
+type CustomerServiceInterface interface {
+	Create(customer *model.Customer) error
+	GetAll() (*[]model.Customer, error)
+	Login(customer model.Customer) (*model.Customer, error)
+}
+
 type CustomerService struct {
 	Repo repository.AllRepository
 	Log  *zap.Logger
 }
 
-func NewCustomerService(repo repository.AllRepository, log *zap.Logger) CustomerService {
-	return CustomerService{
+func NewCustomerService(repo repository.AllRepository, log *zap.Logger) CustomerServiceInterface {
+	return &CustomerService{
 		Repo: repo,
 		Log:  log,
 	}

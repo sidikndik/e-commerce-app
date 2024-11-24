@@ -13,6 +13,10 @@ func SetupReouter(ctx infra.Context) {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 
+	r.Route("/auth", func(r chi.Router) {
+		r.Post("/login", ctx.Handler.CustomerHandler.Login)
+	})
+
 	r.Route("/customer", func(r chi.Router) {
 		r.Post("/", ctx.Handler.CustomerHandler.Create)
 		r.Get("/", ctx.Handler.CustomerHandler.GetAll)

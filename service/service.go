@@ -7,7 +7,7 @@ import (
 )
 
 type AllService struct {
-	CustomerService CustomerService
+	CustomerService CustomerServiceInterface
 }
 
 func NewAllService(repo repository.AllRepository, log *zap.Logger) AllService {

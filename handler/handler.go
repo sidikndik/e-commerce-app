@@ -12,6 +12,6 @@ type AllHandler struct {
 
 func NewAllHandler(service service.AllService, log *zap.Logger) AllHandler {
 	return AllHandler{
-		CustomerHandler: NewCustomerService(service, log),
+		CustomerHandler: NewCustomerHandler(service, log),
 	}
 }

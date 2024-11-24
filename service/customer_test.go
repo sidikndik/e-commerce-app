@@ -12,7 +12,7 @@ import (
 )
 
 func TestLogin(t *testing.T) {
-	logger, _ := zap.NewDevelopment()
+	logger := zap.NewNop()
 
 	mockRepo := repository.CustomerRepositoryMock{}
 	allRepo := repository.AllRepository{

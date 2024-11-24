@@ -8,18 +8,17 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"go.uber.org/zap"
 )
 
 func TestLogin(t *testing.T) {
-	logger := zap.NewNop()
+	// logger := zap.NewNop()
 
 	mockRepo := repository.CustomerRepositoryMock{}
 	allRepo := repository.AllRepository{
 		CustomerRep: &mockRepo,
 	}
 
-	customerService := NewCustomerService(allRepo, logger)
+	customerService := NewCustomerService(allRepo, nil)
 
 	// Mock data
 	validCustomer := model.Customer{

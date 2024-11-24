@@ -6,6 +6,7 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/zap"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -87,4 +88,45 @@ func TestCustomerRepository_GetByCondition_GORM(t *testing.T) {
 		assert.Nil(t, result)
 		assert.Equal(t, gorm.ErrRecordNotFound, err)
 	})
+}
+
+func BenchmarkGetAll(b *testing.B) {
+	// Mock database
+	sqlDB, mock, err := sqlmock.New()
+	if err != nil {
+		b.Fatalf("Failed to create mock DB: %s", err)
+	}
+	defer sqlDB.Close()
+
+	dialector := postgres.New(postgres.Config{Conn: sqlDB})
+	db, err := gorm.Open(dialector, &gorm.Config{})
+	if err != nil {
+		b.Fatalf("Failed to create Gorm DB: %s", err)
+	}
+
+	// Mock data
+	mockRows := sqlmock.NewRows([]string{"name", "email", "phone", "password"}).
+		AddRow("John Doe", "john@example.com", "123456789", "hashedPassword").
+		AddRow("Jane Doe", "jane@example.com", "987654321", "hashedPassword")
+
+	// Tambahkan ekspektasi untuk setiap iterasi benchmark
+	mock.MatchExpectationsInOrder(false) // Tidak peduli urutan ekspektasi
+
+	// Repository setup
+	logger := zap.NewNop()
+	repo := NewCustomerRepository(db, logger)
+
+	for i := 0; i < b.N; i++ {
+		mock.ExpectQuery("SELECT name, email, phone, password FROM customers").
+			WillReturnRows(mockRows)
+
+		customers, err := repo.GetAll()
+		if err != nil {
+			b.Errorf("Unexpected error: %v", err)
+		}
+
+		if customers == nil {
+			b.Errorf("Expected value not to be nil")
+		}
+	}
 }
